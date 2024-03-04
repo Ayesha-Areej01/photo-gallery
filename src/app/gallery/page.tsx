@@ -1,40 +1,42 @@
 import cloudinary from 'cloudinary';
 import UploadButton from "./upload-button";
 import { CldImage } from 'next-cloudinary';
-import { CloudinaryImage } from './cloudinary-image';
+import { CloudinaryImage } from '../../components/cloudinary-image';
+import { ImageGrid } from '../../components/image-grid';
+import GalleryGrid from './gallery-grid';
 
-type SearchResult ={
-    public_id: string
+export type SearchResult ={
+    public_id: string;
+    tags: string[];
 }
 
 export default async function GalleryPage() {
     const results = (await cloudinary.v2.search
     .expression('resource_type:image')
     .sort_by('created_at','desc')
-    .max_results(10)
+    .with_field('tags')
+    .max_results(30)
     .execute()) as { resources: SearchResult[]};
-    console.log(results);
-  return (
-    <section>
-        <div className='flex flex-col gap-8'>
-            <div className="flex justify-between">
-        <h1 className="text-4xl font-bold">GALLERY</h1>
-        <UploadButton />
-        </div>
+    console.log("results", results);
 
-    <div className='grid grid-cols-4 gap-4'>
-    {results.resources.map((result) =>
-    <CloudinaryImage
-    key={result.public_id}
-    src={result.public_id}
-    width="400"
-    height="300"
-    alt="Image from Cloudinary"
-    />
-        )}
-        </div>
-        </div>
-    </section>
-  )
+    const MAX_COLUMNS = 4 ;
+
+    function getColumns(colIndex: number) {
+        return results.resources.filter(
+            (resources, idx) =>  idx % MAX_COLUMNS === colIndex
+        )
+    }
+
+return (
+    <div className='flex flex-col gap-8'>
+    <div className="flex justify-between">
+    <h1 className="text-4xl font-bold">Gallery</h1>
+    <UploadButton />
+    </div>
+    <GalleryGrid
+    images={results.resources}/>
+    </div>
+        
+)
 }
 
