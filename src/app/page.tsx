@@ -1,5 +1,4 @@
 "use client";
-
 import { CldImage } from "next-cloudinary";
 import { CldUploadButton } from "next-cloudinary";
 import { useState } from "react";
@@ -20,7 +19,7 @@ export default function Home() {
         onUpload={(result: UploadResult) => {
           setImageId(result.info.public_id);
         }}
-        uploadPreset="giomsr4s"
+        uploadPreset="q0a2qacc"
       />
 
       {imageId && (
@@ -29,7 +28,7 @@ export default function Home() {
           height="300"
           src={imageId}
           sizes="100vw"
-          alt="Description of my image"
+          alt="Description of Image"
         />
       )}
     </main>
